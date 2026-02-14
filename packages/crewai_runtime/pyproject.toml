@@ -1,0 +1,9 @@
+[project]
+name = "personal-stylist-crewai-runtime"
+version = "0.1.0"
+description = "CrewAI runtime definitions for personal-stylist-ai"
+requires-python = ">=3.11"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
