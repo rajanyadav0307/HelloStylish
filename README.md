@@ -12,7 +12,7 @@ Agentic personal stylist runtime with Google Drive photo ingestion, multi-step r
 1. Create a Google Cloud OAuth app.
 2. Enable Google Drive API.
 3. Add redirect URI: `http://localhost:8000/api/drive/oauth/callback`.
-4. Export environment variables:
+4. Export environment variables (or put the same keys in `.env`):
 ```bash
 export GOOGLE_CLIENT_ID='...'
 export GOOGLE_CLIENT_SECRET='...'
@@ -20,9 +20,9 @@ export GOOGLE_OAUTH_REDIRECT_URI='http://localhost:8000/api/drive/oauth/callback
 export OPENAI_API_KEY='...'
 export OPENAI_API_BASE='https://api.openai.com/v1'
 export OPENAI_VISION_MODEL='gpt-4.1-mini'
-export SERPAPI_API_KEY='...'
 export SERPAPI_ENDPOINT='https://serpapi.com/search.json'
 export PRODUCT_DATA_MODE='auto'   # auto|mock|serpapi
+export SERPAPI_API_KEY='...'      # required when PRODUCT_DATA_MODE is auto or serpapi
 ```
 
 ## Start the stack
@@ -39,6 +39,15 @@ cp .env.example .env
 ```bash
 ./infra/scripts/real_test.sh you@example.com
 ```
+Optional: preselect a folder in the same command:
+```bash
+./infra/scripts/real_test.sh you@example.com <folder_id>
+```
+Mock-only mode (skip SerpAPI key requirement):
+```bash
+# set PRODUCT_DATA_MODE=mock in .env, then run:
+./infra/scripts/real_test.sh you@example.com
+```
 3. If Drive is not connected yet, the script prints an OAuth URL.
 4. Open that URL in browser, grant access, then rerun the same command.
 5. If no folder is selected, script prints folder ids and the select command.
@@ -46,7 +55,7 @@ cp .env.example .env
 - step statuses
 - artifact kinds
 - `STYLE_BRIEF` analysis method (`multimodal_llm` / `heuristic_fallback` / `none`)
-- product data mode (`serpapi` when real catalog data is pulled)
+- `DEALS` and `BRAND_SEARCH` data mode/provider (`serpapi` when live catalog data is pulled)
 
 ## Connect Google Drive
 1. Request OAuth URL:
@@ -96,6 +105,7 @@ Expected `style_brief.inline_json.analysis_method` values:
 - `none`: Drive not connected, no selected folder, or no photos.
 
 Expected product data behavior:
+- live provider path: SerpAPI Google Shopping (`gl=us`, `hl=en`) for `DEALS` and `BRAND_SEARCH`.
 - with `SERPAPI_API_KEY` present and `PRODUCT_DATA_MODE=auto|serpapi`, `DEALS` and `BRAND_SEARCH` pull live shopping results.
 - if provider errors or returns no results, flow automatically falls back to mock candidates and marks `data_mode=mock_fallback`.
 
