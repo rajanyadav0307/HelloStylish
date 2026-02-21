@@ -3,6 +3,9 @@ name = "personal-stylist-common"
 version = "0.1.0"
 description = "Shared schemas and constants for personal-stylist-ai"
 requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.0.0",
+]
 
 [build-system]
 requires = ["setuptools>=68", "wheel"]

@@ -17,12 +17,15 @@ Agentic personal stylist runtime with Google Drive photo ingestion, multi-step r
 export GOOGLE_CLIENT_ID='...'
 export GOOGLE_CLIENT_SECRET='...'
 export GOOGLE_OAUTH_REDIRECT_URI='http://localhost:8000/api/drive/oauth/callback'
+export GOOGLE_DRIVE_SCOPE='https://www.googleapis.com/auth/drive.readonly'
 export OPENAI_API_KEY='...'
 export OPENAI_API_BASE='https://api.openai.com/v1'
 export OPENAI_VISION_MODEL='gpt-4.1-mini'
 export SERPAPI_ENDPOINT='https://serpapi.com/search.json'
 export PRODUCT_DATA_MODE='auto'   # auto|mock|serpapi
 export SERPAPI_API_KEY='...'      # required when PRODUCT_DATA_MODE is auto or serpapi
+export ORCHESTRATOR_POLL_INTERVAL_SECONDS='1.0'  # optional
+export ORCHESTRATOR_RUN_ONCE='0'                  # optional
 ```
 
 ## Start the stack
