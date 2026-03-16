@@ -85,9 +85,9 @@ services:
       MINIO_BUCKET: stylist-artifacts
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      OPENAI_API_BASE: ${OPENAI_API_BASE:-https://api.openai.com/v1}
-      OPENAI_VISION_MODEL: ${OPENAI_VISION_MODEL:-gpt-4.1-mini}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_API_BASE: ${GEMINI_API_BASE:-https://generativelanguage.googleapis.com/v1beta/openai}
+      GEMINI_VISION_MODEL: ${GEMINI_VISION_MODEL:-gemini-2.5-flash}
       SERPAPI_API_KEY: ${SERPAPI_API_KEY:-}
       SERPAPI_ENDPOINT: ${SERPAPI_ENDPOINT:-https://serpapi.com/search.json}
       PRODUCT_DATA_MODE: ${PRODUCT_DATA_MODE:-auto}

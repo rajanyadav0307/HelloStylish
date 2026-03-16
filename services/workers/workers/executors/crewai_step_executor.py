@@ -18,9 +18,9 @@ GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_DRIVE_API = "https://www.googleapis.com/drive/v3"
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET", "")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-OPENAI_API_BASE = os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
-OPENAI_VISION_MODEL = os.getenv("OPENAI_VISION_MODEL", "gpt-4.1-mini")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GEMINI_API_BASE = os.getenv("GEMINI_API_BASE", "https://generativelanguage.googleapis.com/v1beta/openai")
+GEMINI_VISION_MODEL = os.getenv("GEMINI_VISION_MODEL", "gemini-2.5-flash")
 SERPAPI_API_KEY = os.getenv("SERPAPI_API_KEY", "")
 SERPAPI_ENDPOINT = os.getenv("SERPAPI_ENDPOINT", "https://serpapi.com/search.json")
 PRODUCT_DATA_MODE = os.getenv("PRODUCT_DATA_MODE", "auto").strip().lower()
@@ -277,8 +277,8 @@ def _normalize_llm_style_brief(raw: dict) -> dict:
 
 
 def _call_multimodal_style_agent(prepared_images: list[dict]) -> dict:
-    if not OPENAI_API_KEY:
-        raise RuntimeError("OPENAI_API_KEY is not configured for STYLE_BRIEF multimodal analysis")
+    if not GEMINI_API_KEY:
+        raise RuntimeError("GEMINI_API_KEY is not configured for STYLE_BRIEF multimodal analysis")
 
     if not prepared_images:
         raise RuntimeError("No image payloads available for multimodal STYLE_BRIEF analysis")
@@ -314,7 +314,7 @@ def _call_multimodal_style_agent(prepared_images: list[dict]) -> dict:
         )
 
     payload = {
-        "model": OPENAI_VISION_MODEL,
+        "model": GEMINI_VISION_MODEL,
         "temperature": 0.2,
         "response_format": {"type": "json_object"},
         "messages": [
@@ -327,9 +327,9 @@ def _call_multimodal_style_agent(prepared_images: list[dict]) -> dict:
     }
 
     response = requests.post(
-        f"{OPENAI_API_BASE.rstrip('/')}/chat/completions",
+        f"{GEMINI_API_BASE.rstrip('/')}/chat/completions",
         headers={
-            "Authorization": f"Bearer {OPENAI_API_KEY}",
+            "Authorization": f"Bearer {GEMINI_API_KEY}",
             "Content-Type": "application/json",
         },
         json=payload,
@@ -500,7 +500,7 @@ def _style_brief_fallback(access_token: str, folder: dict, photos: list[dict], r
         "recommended_brands": brands,
         "avoid_colors": [],
         "budget_max": 150,
-        "confidence_notes": "Use OPENAI_API_KEY to enable multimodal visual analysis in STYLE_BRIEF.",
+        "confidence_notes": "Use GEMINI_API_KEY to enable multimodal visual analysis in STYLE_BRIEF.",
     }
 
 

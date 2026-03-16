@@ -18,7 +18,7 @@ required_vars=(
   GOOGLE_CLIENT_ID
   GOOGLE_CLIENT_SECRET
   GOOGLE_OAUTH_REDIRECT_URI
-  OPENAI_API_KEY
+  GEMINI_API_KEY
 )
 
 missing=()
@@ -40,11 +40,11 @@ if (( ${#missing[@]} > 0 )); then
   exit 1
 fi
 
-if [[ -z "${OPENAI_API_BASE:-}" ]]; then
-  export OPENAI_API_BASE="https://api.openai.com/v1"
+if [[ -z "${GEMINI_API_BASE:-}" ]]; then
+  export GEMINI_API_BASE="https://generativelanguage.googleapis.com/v1beta/openai"
 fi
-if [[ -z "${OPENAI_VISION_MODEL:-}" ]]; then
-  export OPENAI_VISION_MODEL="gpt-4.1-mini"
+if [[ -z "${GEMINI_VISION_MODEL:-}" ]]; then
+  export GEMINI_VISION_MODEL="gemini-2.5-flash"
 fi
 
 ./infra/scripts/dev_up.sh
