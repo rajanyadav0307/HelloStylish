@@ -130,8 +130,8 @@ def test_style_brief_falls_back_when_multimodal_errors(monkeypatch):
 
 
 def test_call_multimodal_style_agent_requires_api_key(monkeypatch):
-    monkeypatch.setattr(executor, "OPENAI_API_KEY", "")
-    with pytest.raises(RuntimeError, match="OPENAI_API_KEY"):
+    monkeypatch.setattr(executor, "GEMINI_API_KEY", "")
+    with pytest.raises(RuntimeError, match="GEMINI_API_KEY"):
         executor._call_multimodal_style_agent(
             [{"id": "p-1", "name": "look-1.jpg", "data_uri": "data:image/jpeg;base64,AAAA"}]
         )

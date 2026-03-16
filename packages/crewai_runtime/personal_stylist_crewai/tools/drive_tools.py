@@ -62,7 +62,7 @@ def select_analysis_photos(photos: list[dict], max_images: int = 4) -> list[dict
 
 
 def build_multimodal_messages(prompt: str, analysis_photos: list[dict]) -> list[dict]:
-    """Build OpenAI-compatible multimodal user content blocks."""
+    """Build Gemini-compatible multimodal user content blocks."""
     content: list[dict] = [{"type": "text", "text": prompt}]
     for photo in analysis_photos:
         image_url = photo.get("data_uri") or photo.get("image_uri")
