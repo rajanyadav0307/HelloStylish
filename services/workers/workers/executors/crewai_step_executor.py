@@ -263,7 +263,11 @@ def _normalize_llm_style_brief(raw: dict) -> dict:
     if not isinstance(observed, dict):
         observed = {}
 
+    gender_raw = str(raw.get("gender", "")).strip().lower()
+    gender = gender_raw if gender_raw in ("male", "female") else ""
+
     return {
+        "gender": gender,
         "style_summary": str(raw.get("style_summary", "Personalized style brief from multimodal analysis.")),
         "observed_features": observed,
         "palette": _str_list(raw.get("palette"), ["navy", "cream", "olive"], max_items=5),
@@ -287,10 +291,12 @@ def _call_multimodal_style_agent(prepared_images: list[dict]) -> dict:
         "You are STYLE_BRIEF, a fashion stylist agent. Analyze the outfit/person photos and produce a concise style profile.\n"
         "Rules:\n"
         "- Focus on visible fashion/style cues only.\n"
+        "- Identify the apparent gender (male/female) from the clothing and appearance to ensure accurate recommendations.\n"
         "- Do not infer sensitive traits (race, religion, health, politics).\n"
-        "- Recommend practical outfit categories, colors, and brands.\n"
+        "- Recommend practical outfit categories, colors, and brands appropriate for the identified gender.\n"
         "Return JSON with keys:\n"
         "{\n"
+        "  \"gender\": string (\"male\" or \"female\"),\n"
         "  \"style_summary\": string,\n"
         "  \"observed_features\": {\"silhouette\": string, \"fit_preference\": string, \"patterns_or_textures\": [string]},\n"
         "  \"palette\": [string],\n"
@@ -808,6 +814,9 @@ def _real_brand_search_payload(style: dict, deals: dict) -> dict:
     deals_by_brand = {row["brand"]: row for row in deals.get("deals", []) if row.get("brand")}
     brands = list(deals_by_brand.keys()) or style.get("recommended_brands") or ["Zara", "H&M", "Mango"]
 
+    gender = style.get("gender", "").lower()
+    gender_label = "men" if gender == "male" else "women" if gender == "female" else ""
+
     candidates = []
     seen_keys: set[str] = set()
     errors = []
@@ -816,7 +825,7 @@ def _real_brand_search_payload(style: dict, deals: dict) -> dict:
     for brand in brands[:5]:
         deal_hint = float(deals_by_brand.get(brand, {}).get("discount_pct", 0) or 0)
         for category in categories[:2]:
-            query = f"{brand} {category} women"
+            query = f"{brand} {category} {gender_label}".strip()
             queries.append(query)
             try:
                 rows = _serpapi_shopping_search(query, num=20)
@@ -826,7 +835,15 @@ def _real_brand_search_payload(style: dict, deals: dict) -> dict:
 
             for row in rows[:8]:
                 title = str(row.get("title", "")).strip()
-                link = str(row.get("link") or row.get("product_link") or "").strip()
+                source_domain = str(row.get("source") or "").strip()
+                raw_link = str(row.get("link") or "").strip()
+                if raw_link and not raw_link.startswith("https://www.google.com/search"):
+                    link = raw_link
+                elif source_domain:
+                    _search_q = quote_plus(f"{row.get('title', '')} site:{source_domain}")
+                    link = f"https://www.google.com/search?q={_search_q}"
+                else:
+                    link = str(row.get("product_link") or "").strip()
                 if not title and not link:
                     continue
 
